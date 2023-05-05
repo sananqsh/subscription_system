@@ -44,43 +44,27 @@ class SubscriptionSystem(Subject):
         if tokens[0] == "add":
             if tokens[1] == "sub":
                 title, price = tokens[2], int(tokens[3])
-                subscription = Subscription(title, price)
-                self.subscriptions[title] = subscription 
+                self.add_subscription(title, price)
 
             elif tokens[1] == "customer":
-                customer_id, username , credit = int(tokens[2]), tokens[3], int(tokens[4])
-                customer = Customer(customer_id, username, credit)
-                self.customers[str(customer_id)] = customer
+                customer_id, username , credit = tokens[2], tokens[3], int(tokens[4])
+                self.add_customer(customer_id, username, credit)
 
             elif tokens[1] == "credit":
-                customer_id = tokens[2]
-                credit_amount = int(tokens[3])
+                customer_id, credit_amount = tokens[2], int(tokens[3])
                 self.customers[customer_id].add_credit(credit_amount)
 
         elif tokens[0] == "subscribe":
-            customer_id = tokens[1]
-            title = tokens[2]
-            handler_key = customer_id + title
-
-            if handler_key in self._observers.keys():
-                print("Already subscribed!")
-            else:
-                handler = SubscriptionHandler(self.customers[customer_id], self.subscriptions[title],
-                                              self.subscription_interval, self._time)
-
-                Subject.subscribe(self, handler_key, handler)
+            customer_id, title = tokens[1], tokens[2]
+            self.subscribe_user(customer_id, title)
 
         elif tokens[0] == "deact":
-            customer_id = tokens[1]
-            title = tokens[2]
-            handler_key = customer_id + title
-            self._observers[handler_key].deactivate()
+            customer_id, title = tokens[1], tokens[2]
+            self.deactivate_subscription(customer_id, title)
 
         elif tokens[0] == "react":
-            customer_id = tokens[1]
-            title = tokens[2]
-            handler_key = customer_id + title
-            self._observers[handler_key].activate(self._time)
+            customer_id, title = tokens[1], tokens[2]
+            self.activate_subscription(customer_id, title, self._time)
             
         elif tokens[0] == "pay":
             customer_id = tokens[1]
@@ -97,8 +81,37 @@ class SubscriptionSystem(Subject):
             customer_id = tokens[1]
             self.customers[customer_id].display_report()
 
+    def add_subscription(self, title, price):
+        subscription = Subscription(title, price)
+        self.subscriptions[title] = subscription 
+
+    def add_customer(self, customer_id, username, credit):
+        customer = Customer(int(customer_id), username, credit)
+        self.customers[customer_id] = customer
+
+    def subscribe_user(self, customer_id, title):
+        handler_key = customer_id + title
+        if handler_key in self._observers.keys():
+                print("Already subscribed!")
+        else:
+            handler = SubscriptionHandler(
+                self.customers[customer_id], self.subscriptions[title], 
+                self.subscription_interval, self._time
+            )
+
+            Subject.subscribe(self, handler_key, handler)
+
+
+    def deactivate_subscription(self, customer_id, title):
+        handler_key = customer_id + title
+        self._observers[handler_key].deactivate()
+
+    def activate_subscription(self, customer_id, title, time):
+        handler_key = customer_id + title
+        self._observers[handler_key].activate(time)
+
     def list_customer_subs(self, customer_id):
-        for key, sub in self._observers:
+        for key, sub in self._observers.items():
             if key.startswith(customer_id):
                 sub.display()        
          
