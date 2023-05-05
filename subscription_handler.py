@@ -11,10 +11,11 @@ class Observer:
 class SubscriptionHandler(Observer):
     """Update user credit and generate invoice on time"""
 
-    def __init__(self, customer, time, subscription_interval):
+    def __init__(self, customer, subscription, subscription_interval, time):
         self.customer = customer
+        self.subscription = subscription
         self.subscription_interval = subscription_interval
-        
+
         self.previous_usage = ZERO_TIMEDELTA
         self.activate(time)
 
@@ -29,13 +30,13 @@ class SubscriptionHandler(Observer):
                 # Test:
                 print("==========Interval reached!!!===========")
 
-                # Reduce credit from customer
+                # Reduce credit from customer and Generate invoice
                 try:
-                  self.customer.charge(99)
+                  self.customer.charge(self.subscription.price)
                   self.generate_invoice()
                 except NotEnoughCredit as e:
                   print(e.message())
-                  self.customer.add_debt(99)
+                  self.customer.add_debt(self.subscription.price)
                   self.deactivate()
 
                 self.start_time = self.current_time
@@ -59,9 +60,8 @@ class SubscriptionHandler(Observer):
             print("Customer has to pay their debts first!")
     
     def deactivate(self):
-        self.previous_usage = self.current_interval()
         self.active = False
 
     def generate_invoice(self):
-        invoice = Invoice(self.customer.id, "TEST", 99, self.start_time, self.current_time)
+        invoice = Invoice(self.customer.id, self.subscription.title, self.subscription.price, self.start_time, self.current_time)
         self.customer.add_invoice(invoice)

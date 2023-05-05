@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from subscription_handler import SubscriptionHandler
 from customer import Customer
+from subscription import Subscription
 
 class Subject:
     def __init__(self):
@@ -25,7 +26,7 @@ class SubscriptionSystem(Subject):
     def __init__(self, subscription_interval=timedelta(minutes=10)):
         Subject.__init__(self)
         self.subscription_interval = subscription_interval
-        self.subscriptions = []
+        self.subscriptions = {}
         self._time = datetime.now()
         self.customers = {}
 
@@ -40,14 +41,18 @@ class SubscriptionSystem(Subject):
 
     def handle_command(self, command):
         if command == "add":
-            handler = SubscriptionHandler(self.customers[1], self._time, self.subscription_interval)
+            handler = SubscriptionHandler(self.customers[1], self.subscriptions["Cloud"], self.subscription_interval, self._time)
             Subject.subscribe(self, handler)
+        elif command == "add sub":
+            subscription = Subscription("Cloud", 49)
+            self.subscriptions["Cloud"] = subscription
         elif command == "deact":
             self._observers[0].deactivate()
         elif command == "react":
             self._observers[0].activate(self._time)
         elif command == "pay debt":
             self.customers[1].pay_debts()
+
 
     def pass_time(self):
         self._time += timedelta(minutes=1)
