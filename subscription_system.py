@@ -5,20 +5,20 @@ from subscription import Subscription
 
 class Subject:
     def __init__(self):
-        self._observers = []
+        self._observers = {}
 
-    def subscribe(self, observer):
+    def subscribe(self, observer_key, observer):
         if observer not in self._observers:
-            self._observers.append(observer)
+            self._observers[observer_key] = observer
 
-    def unsubscribe(self, observer):
+    def unsubscribe(self, observer_key):
         try:
-            self._observers.remove(observer)
+            del self._observers[observer_key]
         except ValueError:
             pass
 
     def notify(self, data = None):
-        for observer in self._observers:
+        for _, observer in self._observers.items():
             observer.update(data)
 
 class SubscriptionSystem(Subject):
@@ -60,8 +60,15 @@ class SubscriptionSystem(Subject):
         elif tokens[0] == "subscribe":
             customer_id = tokens[1]
             title = tokens[2]
-            handler = SubscriptionHandler(self.customers[customer_id], self.subscriptions[title], self.subscription_interval, self._time)
-            Subject.subscribe(self, handler)
+            handler_key = customer_id + title
+
+            if handler_key in self._observers.keys():
+                print("Already subscribed!")
+            else:
+                handler = SubscriptionHandler(self.customers[customer_id], self.subscriptions[title],
+                                              self.subscription_interval, self._time)
+
+                Subject.subscribe(self, handler_key, handler)
 
         elif tokens[0] == "deact":
             self._observers[0].deactivate()
