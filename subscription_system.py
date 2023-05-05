@@ -86,6 +86,22 @@ class SubscriptionSystem(Subject):
             customer_id = tokens[1]
             self.customers[customer_id].pay_debts()
 
+        elif tokens[0] == "ls":
+            customer_id = tokens[2]
+            if tokens[1] == "subs":
+                self.list_customer_subs(customer_id)
+            elif tokens[1] == "invoices":
+                self.customers[customer_id].display_invoices()
+        
+        elif tokens[0] == "report":
+            customer_id = tokens[1]
+            self.customers[customer_id].display_report()
+
+    def list_customer_subs(self, customer_id):
+        for key, sub in self._observers:
+            if key.startswith(customer_id):
+                sub.display()        
+         
     def pass_time(self):
         self._time += timedelta(minutes=1)
         self.notify(self._time)

@@ -37,3 +37,16 @@ class Customer:
     
     def pay_debts(self):
         self.debt = 0
+
+    def display_invoices(self):
+        for invoice in self.invoices:
+            invoice.display()
+    
+    def display_report(self):
+        number_of_invoices = len(self.invoices)
+        credit_spent = 0
+        for invoice in self.invoices:
+            credit_spent += invoice.price
+
+        print(f"Number of invoices generated: {number_of_invoices}")
+        print(f"Credit spent by customer: {credit_spent}")

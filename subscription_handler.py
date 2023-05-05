@@ -68,3 +68,10 @@ class SubscriptionHandler(Observer):
     def generate_invoice(self):
         invoice = Invoice(self.customer.id, self.subscription.title, self.subscription.price, self.start_time, self.current_time)
         self.customer.add_invoice(invoice)
+
+    def display(self):
+        print("=======================Subscription=======================")
+        print(f"========Customer ID: {self.customer.id}============================")
+        print(f"======subscription: {self.subscription.title}============================")
+        print(f"===========price: {self.subscription.price}============================")
+        print("===========================================")
