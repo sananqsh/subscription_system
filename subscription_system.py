@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from subscription_handler import SubscriptionHandler
 
 class Subject:
     def __init__(self):
@@ -25,3 +26,22 @@ class SubscriptionSystem(Subject):
         self.subscription_interval = subscription_interval
         self.subscriptions = []
         self._time = datetime.now()
+
+    def run(self):
+        while True:
+            cmd = input()
+            self.handle_cmd(cmd)
+            self.pass_time()
+
+    def handle_cmd(self, cmd):
+        if cmd == "add":
+            handler = SubscriptionHandler(self._time, self.subscription_interval)
+            Subject.subscribe(self, handler)
+        elif cmd == "deact":
+            self._observers[0].deactivate()
+        elif cmd == "react":
+            self._observers[0].activate(self._time)
+
+    def pass_time(self):
+        self._time += timedelta(minutes=1)
+        self.notify(self._time)
