@@ -45,6 +45,7 @@ class SubscriptionHandler(Observer):
         # Test:
         print(f"start: {self.start_time.minute}")
         print(f"current_time: {self.current_time.minute}")
+        print(f"previous_usage: {self.previous_usage}")
         print(f"delta: {self.current_interval()}")
         print("=================!!!================")
 
@@ -60,6 +61,8 @@ class SubscriptionHandler(Observer):
             print("Customer has to pay their debts first!")
     
     def deactivate(self):
+        self.previous_usage = self.current_time - self.start_time
+        self.start_time = self.current_time
         self.active = False
 
     def generate_invoice(self):
