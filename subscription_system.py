@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from subscription_handler import SubscriptionHandler
+from customer import Customer
 
 class Subject:
     def __init__(self):
@@ -33,9 +34,15 @@ class SubscriptionSystem(Subject):
             self.handle_cmd(cmd)
             self.pass_time()
 
+            # Test:
+            print(f"time: {self._time.minute}")
+
     def handle_cmd(self, cmd):
         if cmd == "add":
-            handler = SubscriptionHandler(self._time, self.subscription_interval)
+            # Test:
+            customer = Customer(1, "sanan", 100)
+
+            handler = SubscriptionHandler(customer, self._time, self.subscription_interval)
             Subject.subscribe(self, handler)
         elif cmd == "deact":
             self._observers[0].deactivate()
