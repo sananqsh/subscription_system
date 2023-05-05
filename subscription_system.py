@@ -27,27 +27,27 @@ class SubscriptionSystem(Subject):
         self.subscription_interval = subscription_interval
         self.subscriptions = []
         self._time = datetime.now()
+        self.customers = {}
 
     def run(self):
         while True:
-            cmd = input()
-            self.handle_cmd(cmd)
+            command = input()
+            self.handle_command(command)
             self.pass_time()
 
             # Test:
             print(f"time: {self._time.minute}")
 
-    def handle_cmd(self, cmd):
-        if cmd == "add":
-            # Test:
-            customer = Customer(1, "sanan", 100)
-
-            handler = SubscriptionHandler(customer, self._time, self.subscription_interval)
+    def handle_command(self, command):
+        if command == "add":
+            handler = SubscriptionHandler(self.customers[1], self._time, self.subscription_interval)
             Subject.subscribe(self, handler)
-        elif cmd == "deact":
+        elif command == "deact":
             self._observers[0].deactivate()
-        elif cmd == "react":
+        elif command == "react":
             self._observers[0].activate(self._time)
+        elif command == "pay debt":
+            self.customers[1].pay_debts()
 
     def pass_time(self):
         self._time += timedelta(minutes=1)
