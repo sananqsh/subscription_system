@@ -32,12 +32,12 @@ class SubscriptionHandler(Observer):
 
                 # Reduce credit from customer and Generate invoice
                 try:
-                  self.customer.charge(self.subscription.price)
-                  self.generate_invoice()
+                    self.customer.charge(self.subscription.price)
+                    self.generate_invoice()
                 except NotEnoughCredit as e:
-                  print(e.message())
-                  self.customer.add_debt(self.subscription.price)
-                  self.deactivate()
+                    print(e.message())
+                    self.customer.add_debt(self.subscription.price)
+                    self.deactivate()
 
                 self.start_time = self.current_time
                 self.previous_usage = ZERO_TIMEDELTA
@@ -54,9 +54,9 @@ class SubscriptionHandler(Observer):
 
     def activate(self, time):
         if not self.customer.in_debt():
-          self.start_time = time
-          self.current_time = self.start_time
-          self.active = True
+            self.start_time = time
+            self.current_time = self.start_time
+            self.active = True
         else:
             print("Customer has to pay their debts first!")
     
