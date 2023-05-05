@@ -11,19 +11,16 @@ class Customer:
         self.id = id
         self.username = username
         self.credit = credit
+        self.invoices = []
 
     def charge(self, money):
-        # Test:
-        print("============Customer.charge()============")
-        print(f"credit: {self.credit}, money: {money}")
-
         if self.payable(money):
             self.credit -= money
-            # Test:
-            print(f"credit ==> {self.credit}")
         else:
             raise NotEnoughCredit("Customer does not have enough credit.")
-        
+    
+    def add_invoice(self, invoice):
+        self.invoices.append(invoice)
 
     def payable(self, money):
         return money <= self.credit

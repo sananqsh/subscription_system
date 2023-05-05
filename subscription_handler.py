@@ -1,5 +1,6 @@
 from datetime import timedelta
 from customer import NotEnoughCredit
+from invoice import Invoice
 
 ZERO_TIMEDELTA = timedelta(0)
 
@@ -29,15 +30,14 @@ class SubscriptionHandler(Observer):
                 print("==========Interval reached!!!===========")
 
                 # Reduce credit from customer
-                # TODO: charge by real subscription fee -> self.customer.charge(self.sub.price)
+                # TODO: charge by real subscription fee -> self.subscription.price
                 try:
                   self.customer.charge(99)
+                  self.generate_invoice()
                 except NotEnoughCredit as e:
                   print(e.message())
                   self.deactivate()
 
-                # TODO: Generate invoice -> self.customer.generate_invoice(price, start, end)
-                
                 # Update datetimes for next intervals (ignore cases when checking time at is more
                 # than subscription_interval that can be calculated as the next interval of
                 # subscription. For now...):
@@ -54,13 +54,14 @@ class SubscriptionHandler(Observer):
         return (self.time_at - self.start_date) + self.previous_usage
 
     def activate(self, time):
-        # if self.customer.can_pay(self.price):
         self.start_date = time
         self.time_at = self.start_date
         self.active = True
-        # else:
-        #     print("customer does not have enough credit!")
     
     def deactivate(self):
         self.previous_usage = self.current_interval()
         self.active = False
+
+    def generate_invoice(self):
+        invoice = Invoice(self.customer.id, "TEST", 99, self.start_date, self.time_at)
+        self.customer.add_invoice(invoice)
