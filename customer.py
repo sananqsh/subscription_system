@@ -32,5 +32,8 @@ class Customer:
     def in_debt(self):
         return self.debt > 0
     
+    def add_credit(self, credit):
+        self.credit += credit
+    
     def pay_debts(self):
         self.debt = 0

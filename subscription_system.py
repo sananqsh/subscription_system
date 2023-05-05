@@ -52,6 +52,11 @@ class SubscriptionSystem(Subject):
                 customer = Customer(customer_id, username, credit)
                 self.customers[str(customer_id)] = customer
 
+            elif tokens[1] == "credit":
+                customer_id = tokens[2]
+                credit_amount = int(tokens[3])
+                self.customers[customer_id].add_credit(credit_amount)
+
         elif tokens[0] == "subscribe":
             customer_id = tokens[1]
             title = tokens[2]
