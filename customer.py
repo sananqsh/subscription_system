@@ -12,6 +12,7 @@ class Customer:
         self.username = username
         self.credit = credit
         self.invoices = []
+        self.debt = 0
 
     def charge(self, money):
         if self.payable(money):
@@ -24,4 +25,12 @@ class Customer:
 
     def payable(self, money):
         return money <= self.credit
-        
+    
+    def add_debt(self, debt_amount):
+        self.debt += debt_amount
+
+    def in_debt(self):
+        return self.debt > 0
+    
+    def pay_debts(self):
+        self.debt = 0

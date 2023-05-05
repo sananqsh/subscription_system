@@ -30,12 +30,13 @@ class SubscriptionHandler(Observer):
                 print("==========Interval reached!!!===========")
 
                 # Reduce credit from customer
-                # TODO: charge by real subscription fee -> self.subscription.price
+                # TODO: charge by real subscription fee -> self.sub.price)
                 try:
                   self.customer.charge(99)
                   self.generate_invoice()
                 except NotEnoughCredit as e:
                   print(e.message())
+                  self.customer.add_debt(99)
                   self.deactivate()
 
                 # Update datetimes for next intervals (ignore cases when checking time at is more
@@ -54,9 +55,12 @@ class SubscriptionHandler(Observer):
         return (self.time_at - self.start_date) + self.previous_usage
 
     def activate(self, time):
-        self.start_date = time
-        self.time_at = self.start_date
-        self.active = True
+        if not self.customer.in_debt():
+          self.start_date = time
+          self.time_at = self.start_date
+          self.active = True
+        else:
+            print("Customer has to pay their debts first!")
     
     def deactivate(self):
         self.previous_usage = self.current_interval()
