@@ -40,19 +40,31 @@ class SubscriptionSystem(Subject):
             print(f"time: {self._time.minute}")
 
     def handle_command(self, command):
-        if command == "add":
-            handler = SubscriptionHandler(self.customers[1], self.subscriptions["Cloud"], self.subscription_interval, self._time)
-            Subject.subscribe(self, handler)
-        elif command == "add sub":
-            subscription = Subscription("Cloud", 49)
-            self.subscriptions["Cloud"] = subscription
-        elif command == "deact":
-            self._observers[0].deactivate()
-        elif command == "react":
-            self._observers[0].activate(self._time)
-        elif command == "pay debt":
-            self.customers[1].pay_debts()
+        tokens = command.split(" ")
+        if tokens[0] == "add":
+            if tokens[1] == "sub":
+                title, price = tokens[2], int(tokens[3])
+                subscription = Subscription(title, price)
+                self.subscriptions[title] = subscription 
 
+            elif tokens[1] == "customer":
+                customer_id, username , credit = int(tokens[2]), tokens[3], int(tokens[4])
+                customer = Customer(customer_id, username, credit)
+                self.customers[str(customer_id)] = customer
+
+        elif tokens[0] == "subscribe":
+            customer_id = tokens[1]
+            title = tokens[2]
+            handler = SubscriptionHandler(self.customers[customer_id], self.subscriptions[title], self.subscription_interval, self._time)
+            Subject.subscribe(self, handler)
+
+        elif tokens[0] == "deact":
+            self._observers[0].deactivate()
+        elif tokens[0] == "react":
+            self._observers[0].activate(self._time)
+        elif tokens[0] == "pay":
+            customer_id = tokens[1]
+            self.customers[customer_id].pay_debts()
 
     def pass_time(self):
         self._time += timedelta(minutes=1)
