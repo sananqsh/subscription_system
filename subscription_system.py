@@ -71,9 +71,17 @@ class SubscriptionSystem(Subject):
                 Subject.subscribe(self, handler_key, handler)
 
         elif tokens[0] == "deact":
-            self._observers[0].deactivate()
+            customer_id = tokens[1]
+            title = tokens[2]
+            handler_key = customer_id + title
+            self._observers[handler_key].deactivate()
+
         elif tokens[0] == "react":
-            self._observers[0].activate(self._time)
+            customer_id = tokens[1]
+            title = tokens[2]
+            handler_key = customer_id + title
+            self._observers[handler_key].activate(self._time)
+            
         elif tokens[0] == "pay":
             customer_id = tokens[1]
             self.customers[customer_id].pay_debts()
