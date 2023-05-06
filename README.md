@@ -23,7 +23,7 @@ they have spent in the system.
   - ### Requirements
     - [python](https://www.python.org/downloads/)
   
-  - Having installed the requirements:
+  - Having installed the requirements, run the following commands in terminal:
     1. `git clone https://github.com/sananqsh/subscription_system.git`
     2. `cd subscription_system`
     3. `python3 main.py`
