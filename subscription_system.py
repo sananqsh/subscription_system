@@ -1,7 +1,8 @@
 from datetime import datetime, timedelta
 from subscription_handler import SubscriptionHandler
-from customer import Customer
+from customer import Customer, NotEnoughCredit
 from subscription import Subscription
+from display import AlertMessage
 
 class Subject:
     def __init__(self):
@@ -32,12 +33,17 @@ class SubscriptionSystem(Subject):
 
     def run(self):
         while True:
-            command = input()
-            self.handle_command(command)
-            self.pass_time()
+            try:
+                command = input()
+                self.handle_command(command)
+                self.pass_time()
 
-            # Test:
-            print(f"time: {self._time.minute}")
+                # Test:
+                print(f"--> System Time: {self._time}")
+            except NotEnoughCredit as e:
+                AlertMessage(e.message())
+            except KeyError:
+                AlertMessage(f"Key(customer_id/subscription_title) not found")
 
     def handle_command(self, command):
         tokens = command.split(" ")
@@ -92,7 +98,7 @@ class SubscriptionSystem(Subject):
     def subscribe_user(self, customer_id, title):
         handler_key = customer_id + title
         if handler_key in self._observers.keys():
-                print("Already subscribed!")
+            AlertMessage("Already subscribed!")
         else:
             handler = SubscriptionHandler(
                 self.customers[customer_id], self.subscriptions[title], 

@@ -1,3 +1,4 @@
+from display import PrettyDisplay
 
 class NotEnoughCredit(Exception):
     def __init__(self, *args: object) -> None:
@@ -18,7 +19,7 @@ class Customer:
         if self.can_pay(money):
             self.credit -= money
         else:
-            raise NotEnoughCredit("Customer does not have enough credit.")
+            raise NotEnoughCredit("Customer does not have enough credit")
     
     def add_invoice(self, invoice):
         self.invoices.append(invoice)
@@ -48,5 +49,9 @@ class Customer:
         for invoice in self.invoices:
             credit_spent += invoice.price
 
-        print(f"Number of invoices generated: {number_of_invoices}")
-        print(f"Credit spent by customer: {credit_spent}")
+        PrettyDisplay(
+            f"Number of invoices generated: {number_of_invoices}",
+            f"Credit spent by customer: {credit_spent}",
+            f"Customer credit: {self.credit}",
+            f"Customer debt: {self.debt}"
+        )
