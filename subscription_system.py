@@ -8,11 +8,11 @@ class Subject:
     def __init__(self):
         self._observers = {}
 
-    def subscribe(self, observer_key, observer):
+    def register(self, observer_key, observer):
         if observer not in self._observers:
             self._observers[observer_key] = observer
 
-    def unsubscribe(self, observer_key):
+    def detach(self, observer_key):
         try:
             del self._observers[observer_key]
         except ValueError:
@@ -71,7 +71,7 @@ class SubscriptionSystem(Subject):
 
         elif tokens[0] == "subscribe":
             customer_id, title = tokens[1], tokens[2]
-            self.subscribe_user(customer_id, title)
+            self.subscribe_customer(customer_id, title)
 
         elif tokens[0] == "deact":
             customer_id, title = tokens[1], tokens[2]
@@ -117,7 +117,7 @@ class SubscriptionSystem(Subject):
         customer = Customer(int(customer_id), username, credit)
         self.customers[customer_id] = customer
 
-    def subscribe_user(self, customer_id, title):
+    def subscribe_customer(self, customer_id, title):
         handler_key = customer_id + title
         if handler_key in self._observers.keys():
             AlertMessage("Already subscribed!")
@@ -128,7 +128,7 @@ class SubscriptionSystem(Subject):
                     self.subscription_interval, self._time
                 )
 
-                Subject.subscribe(self, handler_key, handler)
+                Subject.register(self, handler_key, handler)
             except CustomerInDebt as e:
                 AlertMessage(e.message())
 

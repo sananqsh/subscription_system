@@ -23,17 +23,17 @@ class Customer:
         self.invoices = []
         self.debt = 0
 
-    def charge(self, money):
-        if self.can_pay(money):
-            self.credit -= money
+    def charge(self, amount):
+        if self.can_pay(amount):
+            self.credit -= amount
         else:
             raise NotEnoughCredit(f"Customer (id={self.id}) does not have enough credit")
     
     def add_invoice(self, invoice):
         self.invoices.append(invoice)
 
-    def can_pay(self, money):
-        return money <= self.credit
+    def can_pay(self, amount):
+        return amount <= self.credit
     
     def add_debt(self, debt_amount):
         self.debt += debt_amount
