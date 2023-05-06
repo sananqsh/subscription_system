@@ -1,5 +1,5 @@
 # Subscription System
-Implementation of financial system of a cloud storage service with python
+Implementing the financial system of a cloud storage service using Python
 
 ## Summary:
 In this system, customer subscribes to a service, periodically having its credit reduced.
