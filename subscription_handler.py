@@ -1,6 +1,7 @@
 from datetime import timedelta
 from customer import NotEnoughCredit
 from invoice import Invoice
+from display import pretty_display
 
 ZERO_TIMEDELTA = timedelta(0)
 
@@ -19,17 +20,11 @@ class SubscriptionHandler(Observer):
         self.previous_usage = ZERO_TIMEDELTA
         self.activate(time)
 
-
     def update(self, time):
-        # Test:
-        print("==========Observer===========")
         if self.active:
             self.current_time = time
 
             if self.current_interval() >= self.subscription_interval:
-                # Test:
-                print("==========Interval reached!!!===========")
-
                 # Reduce credit from customer and Generate invoice
                 try:
                     self.customer.charge(self.subscription.price)
@@ -41,13 +36,6 @@ class SubscriptionHandler(Observer):
 
                 self.start_time = self.current_time
                 self.previous_usage = ZERO_TIMEDELTA
-
-        # Test:
-        print(f"start: {self.start_time.minute}")
-        print(f"current_time: {self.current_time.minute}")
-        print(f"previous_usage: {self.previous_usage}")
-        print(f"delta: {self.current_interval()}")
-        print("=================!!!================")
 
     def current_interval(self):
         return (self.current_time - self.start_time) + self.previous_usage
@@ -66,12 +54,13 @@ class SubscriptionHandler(Observer):
         self.active = False
 
     def generate_invoice(self):
-        invoice = Invoice(self.customer.id, self.subscription.title, self.subscription.price, self.start_time, self.current_time)
+        invoice = Invoice(self.customer.id, self.subscription.title, 
+                          self.subscription.price, self.start_time, self.current_time)
+
         self.customer.add_invoice(invoice)
 
     def display(self):
-        print("=======================Subscription=======================")
-        print(f"========Customer ID: {self.customer.id}============================")
-        print(f"======subscription: {self.subscription.title}============================")
-        print(f"===========price: {self.subscription.price}============================")
-        print("===========================================")
+        items = ["Subscription", f"Customer ID: {self.customer.id}", 
+                 f"subscription: {self.subscription.title}", f"price: {self.subscription.price}"]
+
+        pretty_display(items)
