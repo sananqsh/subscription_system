@@ -15,6 +15,10 @@ Customer must be able to see the list of their subscriptions and invoices.
 Finally, customer must be able to recieve a report on how many invoices and how much credit 
 they have spent in the system.
 
+## UML Class Diagram:
+![UML Class Diagram](./images/UML_class_diagram.png)
+
+
 ## Install
   - ### Requirements
     - [python](https://www.python.org/downloads/)
