@@ -1,5 +1,5 @@
 from datetime import timedelta
-from customer import NotEnoughCredit
+from customer import NotEnoughCredit, CustomerInDebt
 from invoice import Invoice
 from display import PrettyDisplay
 
@@ -13,11 +13,13 @@ class SubscriptionHandler(Observer):
     """Update user credit and generate invoice on time"""
 
     def __init__(self, customer, subscription, subscription_interval, time):
+        if customer.in_debt():
+            raise CustomerInDebt(f"Customer (id={customer.id}) is in debt")
+        if not customer.can_pay(subscription.price):
+            raise NotEnoughCredit(f"Customer (id={customer.id}) does not have enough credit")
+
         self.customer = customer
         self.subscription = subscription
-
-        if not self.customer.can_pay(self.subscription.price):
-            raise NotEnoughCredit("Customer does not have enough credit")
         self.subscription_interval = subscription_interval
 
         self.previous_usage = ZERO_TIMEDELTA
@@ -44,12 +46,12 @@ class SubscriptionHandler(Observer):
         return (self.current_time - self.start_time) + self.previous_usage
 
     def activate(self, time):
-        if not self.customer.in_debt():
-            self.start_time = time
-            self.current_time = self.start_time
-            self.active = True
-        else:
-            print("Customer has to pay their debts first!")
+        if self.customer.in_debt():
+            raise CustomerInDebt(f"Customer (id={self.customer.id}) is in debt")
+
+        self.start_time = time
+        self.current_time = self.start_time
+        self.active = True
     
     def deactivate(self):
         self.previous_usage = self.current_time - self.start_time
