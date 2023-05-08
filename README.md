@@ -18,6 +18,8 @@ they have spent in the system.
 ## UML Class Diagram:
 ![UML Class Diagram](./images/UML_class_diagram.png)
 
+## How to work with:
+The system runs a loop in which each time we hit `enter`, time passes by 1 minute (these are time modelings that can easily be modified if the project is used in real world). In each iteration of this loop, we can input a command to interact with the system. To see all the commands enter this as the input: `help` and if you want to see the manual for a specific command/subcommand: `help [COMMAND]`.
 
 ## Install
   - ### Requirements
